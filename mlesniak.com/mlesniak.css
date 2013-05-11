@@ -30,9 +30,9 @@ a.title:link {
 
 h1 {
     font-weight: bold;
-    font-size: 1.4em;
+    font-size: 2em;
     color: #303030;
-    line-height: 2.8em;
+    line-height: 1em;
 }
 
 h1 a:link {
@@ -40,13 +40,24 @@ h1 a:link {
 }
 
 h2 {
-    font-weight: normal;
+    font-weight: bold;
     font-size: 1.4em;
     color: #303030;
-    line-height: 2.8em;
+    line-height: 1em;
 }
 
 h2 a:link {
+    border-style: none;
+}
+
+h3 {
+    font-weight: normal;
+    font-size: 1.4em;
+    color: #303030;
+    line-height: 1em;
+}
+
+h3 a:link {
     border-style: none;
 }
 
@@ -103,3 +114,21 @@ hr {
     height: 1px;
     margin-bottom: 20px;
 }
+
+.footerLink:link {
+    color: lightgray;
+    border-style: none;;
+}
+
+.footerLink:visited {
+    color: lightgray;
+    border-style: none;;
+}
+
+.footer {
+    width: 120%;
+    color: lightgray;
+    text-align: right;
+
+}
+
