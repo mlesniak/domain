@@ -64,8 +64,13 @@ public class MarkdownFilter implements Filter {
     }
 
     private String rewritePath(String path) {
-        if (path.equals("/")) {
-            path = "index.md";
+        boolean isDir = new File(filterConfig.getInitParameter("root") + path).isDirectory();
+        if (isDir && path.endsWith("/") == false) {
+            path += "/";
+        }
+
+        if (path.endsWith("/")) {
+            path += "index.md";
         } else if (path.endsWith(".html") && path.length() >= 5) {
             path = path.substring(1, path.length() - 5) + ".md";
         }
