@@ -1,0 +1,105 @@
+/* Source: http://leobabauta.com */
+
+body {
+    background: #fff;
+    font-family: helvetica-neue, helvetica, sans-serif;
+    font-size: 1em;
+    line-height: .1em;
+    text-align: justify;
+    float: left;
+    width: 580px;
+    margin-top: 60px;
+    margin-left: 64px;
+}
+
+p {
+    line-height: 1.4em;
+}
+
+.title {
+    font-size: 1.4em;
+    color: #333;
+    line-height: 40px;
+    font-weight: normal;
+    text-align: right;
+}
+
+a.title:link {
+    border-style: none;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 1.4em;
+    color: #303030;
+    line-height: 2.8em;
+}
+
+h1 a:link {
+    border-style: none;
+}
+
+h2 {
+    font-weight: normal;
+    font-size: 1.4em;
+    color: #303030;
+    line-height: 2.8em;
+}
+
+h2 a:link {
+    border-style: none;
+}
+
+pre {
+    line-height: 1.4em
+}
+
+ol {
+    margin: 1em 0 2em 0;
+}
+
+li {
+    line-height: 1.5em;
+}
+
+a:link {
+    color: #303030;
+    text-decoration: none;
+    border-width: 0 0 1px 0;
+    border-style: none none solid none;
+    border-color: #C0C0C0;
+}
+
+a:visited {
+    color: #303030;
+    text-decoration: none;
+    border-width: 0 0 1px 0;
+    border-style: none none solid none;
+    border-color: #C0C0C0;
+}
+
+a:hover {
+    color: #999;
+    border-width: 0 0 1px 0;
+    border-style: none none solid none;
+    border-color: #C0C0C0;
+    text-decoration: none;
+}
+
+.updated {
+    position: absolute;
+    bottom: 10;
+    text-align: right;
+    font-weight: normal;
+    font-size: 0.5em;
+    color: #C0C0C0;
+}
+
+hr {
+    width: 120%;
+    text-align: center;
+    border: 0px;
+    background-color: #d3d3d3;
+    height: 1px;
+    margin-bottom: 20px;
+}
