@@ -21,6 +21,7 @@ import java.io.IOException;
 public class MarkdownFilter implements Filter {
     public static final String HEADER_HTML = "header.html";
     public static final String FOOTER_HTML = "footer.html";
+    public static final String COOKIE_NAME = "mlesniak.com";
     private FilterConfig filterConfig;
 
     @Override
@@ -51,10 +52,10 @@ public class MarkdownFilter implements Filter {
     }
 
     private void handleCookies(HttpServletRequest request, HttpServletResponse response) {
-        String cookieValue = getCookie(request, "mlesniak.com");
+        String cookieValue = getCookie(request, COOKIE_NAME);
         if (cookieValue == null) {
             String id = RandomStringUtils.random(40, true, true);
-            Cookie cookie = new Cookie("mlesniak.com", id);
+            Cookie cookie = new Cookie(COOKIE_NAME, id);
             response.addCookie(cookie);
         } else {
             // TODO
