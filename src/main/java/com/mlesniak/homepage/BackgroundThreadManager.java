@@ -1,4 +1,4 @@
-package com.mlesniak;
+package com.mlesniak.homepage;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

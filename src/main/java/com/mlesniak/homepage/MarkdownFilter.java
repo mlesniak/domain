@@ -1,9 +1,12 @@
-package com.mlesniak;
+package com.mlesniak.homepage;
 
 import com.petebevin.markdown.MarkdownProcessor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -31,6 +34,8 @@ public class MarkdownFilter implements Filter {
         String path = req.getRequestURI().substring(req.getContextPath().length());
         path = rewritePath(path);
 
+        handleCookies(req, (HttpServletResponse) response);
+
         try {
             File file = new File(filterConfig.getInitParameter("root") + path);
             if (file.exists() && file.isDirectory() == false) {
@@ -43,6 +48,28 @@ public class MarkdownFilter implements Filter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private void handleCookies(HttpServletRequest request, HttpServletResponse response) {
+        String cookieValue = getCookie(request, "mlesniak.com");
+        if (cookieValue == null) {
+            String id = RandomStringUtils.random(40, true, true);
+            Cookie cookie = new Cookie("mlesniak.com", id);
+            response.addCookie(cookie);
+        } else {
+            // TODO
+        }
+    }
+
+    private String getCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (StringUtils.equals(cookie.getName(), name)) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 
     private void createMarkdown(ServletResponse response, File file) throws IOException {
