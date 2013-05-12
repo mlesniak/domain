@@ -9,6 +9,8 @@ import org.apache.wicket.protocol.http.WebApplication;
  * @author Michael Lesniak (mail@mlesniak.com)
  */
 public class MainApplication extends WebApplication {
+    private BackgroundThreadManager btm;
+
     @Override
     public Class<? extends WebPage> getHomePage() {
         return HomePage.class;
@@ -17,7 +19,12 @@ public class MainApplication extends WebApplication {
     @Override
     protected void init() {
         super.init();
-
+        btm = (BackgroundThreadManager) getServletContext().getAttribute(BackgroundThreadManager.class.toString());
         mountPage("app", HomePage.class);
     }
+
+    public static BackgroundThreadManager getBackgroundThreadManager() {
+        return ((MainApplication) WebApplication.get()).btm;
+    }
+
 }

@@ -11,7 +11,8 @@
         <!--Location of .md - files and other content-->
         <init-param>
             <param-name>root</param-name>
-            <param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>
+            <!--<param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>-->
+            <param-value>/home/ubuntu/www/</param-value>
         </init-param>
     </filter>
 
@@ -28,6 +29,10 @@
             <param-value>development</param-value>
         </init-param>
     </filter>
+
+    <listener>
+        <listener-class>com.mlesniak.BackgroundThreadManager</listener-class>
+    </listener>
 
     <filter-mapping>
         <filter-name>markdown</filter-name>
