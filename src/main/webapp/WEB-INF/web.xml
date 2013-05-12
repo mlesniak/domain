@@ -11,8 +11,8 @@
         <!--Location of .md - files and other content-->
         <init-param>
             <param-name>root</param-name>
-            <!--<param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>-->
-            <param-value>/home/ubuntu/www/</param-value>
+            <param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>
+            <!--<param-value>/home/ubuntu/www/</param-value>-->
         </init-param>
     </filter>
 
