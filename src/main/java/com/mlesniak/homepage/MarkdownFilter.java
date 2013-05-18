@@ -2,11 +2,9 @@ package com.mlesniak.homepage;
 
 import com.petebevin.markdown.MarkdownProcessor;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 
+import javax.inject.Inject;
 import javax.servlet.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -24,61 +22,55 @@ public class MarkdownFilter implements Filter {
     public static final String COOKIE_NAME = "mlesniak.com";
     private FilterConfig filterConfig;
 
+    @Inject
+    VisitorLogDao dao;
+
+    HttpServletRequest request;
+    HttpServletResponse response;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String path = req.getRequestURI().substring(req.getContextPath().length());
-        path = rewritePath(path);
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+        request = (HttpServletRequest) req;
+        response = (HttpServletResponse) resp;
 
-        handleCookies(req, (HttpServletResponse) response);
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        path = rewritePath(path);
 
         try {
             File file = new File(filterConfig.getInitParameter("root") + path);
-            if (file.exists() && file.isDirectory() == false) {
-                createMarkdown(response, file);
+            if (file.exists() && !file.isDirectory()) {
+                createMarkdown(file);
                 return;
             }
         } catch (IOException e) {
+            System.out.println("I/O error: " + e.getMessage());
+        }
+
+        chain.doFilter(req, resp);
+    }
+
+    private void updateLog() {
+        try {
+            dao.updateOrCreateVisitorLog(request, response);
+        } catch (Exception e) {
+            System.out.println("Cookie handling failed: " + e.getMessage());
             e.printStackTrace();
-            // TODO mlesniak Logging.
-        }
-
-        chain.doFilter(request, response);
-    }
-
-    private void handleCookies(HttpServletRequest request, HttpServletResponse response) {
-        String cookieValue = getCookie(request, COOKIE_NAME);
-        if (cookieValue == null) {
-            String id = RandomStringUtils.random(40, true, true);
-            Cookie cookie = new Cookie(COOKIE_NAME, id);
-            response.addCookie(cookie);
-        } else {
-            // TODO
         }
     }
 
-    private String getCookie(HttpServletRequest request, String name) {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (StringUtils.equals(cookie.getName(), name)) {
-                return cookie.getValue();
-            }
-        }
-
-        return null;
-    }
-
-    private void createMarkdown(ServletResponse response, File file) throws IOException {
+    private void createMarkdown(File file) throws IOException {
         String header = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + HEADER_HTML));
         String footer = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + FOOTER_HTML));
 
         String output = null;
         if (file.getPath().endsWith(".md")) {
+            updateLog();
+
             MarkdownProcessor md = new MarkdownProcessor();
             String content = FileUtils.readFileToString(file);
             output = header + md.markdown(content) + footer;
@@ -93,7 +85,7 @@ public class MarkdownFilter implements Filter {
 
     private String rewritePath(String path) {
         boolean isDir = new File(filterConfig.getInitParameter("root") + path).isDirectory();
-        if (isDir && path.endsWith("/") == false) {
+        if (isDir && !path.endsWith("/")) {
             path += "/";
         }
 

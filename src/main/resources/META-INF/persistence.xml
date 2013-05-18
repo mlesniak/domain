@@ -1,0 +1,14 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+    <persistence-unit name="log">
+        <jta-data-source>appDatabase</jta-data-source>
+        <!--<non-jta-data-source>appDatabaseUnmanaged</non-jta-data-source>-->
+
+        <class>com.mlesniak.homepage.VisitorLog</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        </properties>
+    </persistence-unit>
+</persistence>

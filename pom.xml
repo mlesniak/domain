@@ -32,18 +32,6 @@
             <url>company url</url>
         </organization>
     -->
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <properties>
-        <wicket.version>6.7.0</wicket.version>
-        <jetty.version>7.6.3.v20120416</jetty.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <!--  WICKET DEPENDENCIES -->
         <dependency>
@@ -112,9 +100,24 @@
             <artifactId>openjpa</artifactId>
             <version>2.2.1</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <properties>
+        <wicket.version>6.7.0</wicket.version>
+        <jetty.version>7.6.3.v20120416</jetty.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <build>
         <resources>
