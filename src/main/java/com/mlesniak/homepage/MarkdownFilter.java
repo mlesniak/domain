@@ -20,13 +20,11 @@ public class MarkdownFilter implements Filter {
     public static final String HEADER_HTML = "header.html";
     public static final String FOOTER_HTML = "footer.html";
     public static final String COOKIE_NAME = "mlesniak.com";
-    private FilterConfig filterConfig;
-
     @Inject
     VisitorLogDao dao;
-
     HttpServletRequest request;
     HttpServletResponse response;
+    private FilterConfig filterConfig;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -80,7 +78,7 @@ public class MarkdownFilter implements Filter {
             response.getOutputStream().write(bout);
         }
 
-        ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private String rewritePath(String path) {
