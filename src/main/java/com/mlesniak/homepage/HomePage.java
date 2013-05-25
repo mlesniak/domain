@@ -16,7 +16,7 @@ public class HomePage extends WebPage {
         add(new Label("message", new Model<String>() {
             @Override
             public String getObject() {
-                return (new Date().toString()) + ": " + btm.getTick();
+                return (new Date().toString());
             }
         }));
     }

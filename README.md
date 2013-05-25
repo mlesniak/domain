@@ -1,9 +1,14 @@
-# Things to play with
+# Unsorted playground to play with Amazon EC2 / SES / ...
 
-- JPA for logging with cookies
-- HTML5 / canvas
-- bootstrap
-- logback logging into database
+## Done
+* Markdown to HTML
+* EMail logging
+* Logging with Cookies
 
-- write dialy report emails using amazon ses
+## Open
+* logback logging
+* bootstrap adaption
 
+## Important
+* cleanup
+* better configuration strategy (currently way to mixed)

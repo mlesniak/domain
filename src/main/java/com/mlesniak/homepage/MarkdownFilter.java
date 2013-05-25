@@ -20,10 +20,10 @@ public class MarkdownFilter implements Filter {
     public static final String HEADER_HTML = "header.html";
     public static final String FOOTER_HTML = "footer.html";
     public static final String COOKIE_NAME = "mlesniak.com";
-    @Inject
-    VisitorLogDao dao;
     HttpServletRequest request;
     HttpServletResponse response;
+    @Inject
+    private VisitorLogDao dao;
     private FilterConfig filterConfig;
 
     @Override
@@ -64,6 +64,8 @@ public class MarkdownFilter implements Filter {
     private void createMarkdown(File file) throws IOException {
         String header = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + HEADER_HTML));
         String footer = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + FOOTER_HTML));
+
+        System.out.println("FILE: " + file.getAbsolutePath());
 
         String output = null;
         if (file.getPath().endsWith(".md")) {

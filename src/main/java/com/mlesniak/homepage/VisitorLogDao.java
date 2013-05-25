@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class VisitorLogDao {
         visitorLog.setIp(request.getRemoteHost());
         visitorLog.setId(cookieId);
         visitorLog.setSessionId(request.getSession().getId());
+        visitorLog.setTimestamp(new Date());
 
         em.persist(visitorLog);
         response.addCookie(cookie);
@@ -56,6 +58,7 @@ public class VisitorLogDao {
         visitorLog.setCounter(visitorLog.getCounter() + 1);
         visitorLog.setIp(request.getRemoteHost());
         visitorLog.setSessionId(request.getSession().getId());
+        visitorLog.setTimestamp(new Date());
 
         em.persist(visitorLog);
     }
@@ -90,6 +93,18 @@ public class VisitorLogDao {
 
         // Multiple result can not happen since the id is unique.
         return (VisitorLog) results.get(0);
+    }
+
+    public List getVisitorLogs(Date start, Date end) {
+        Query query = em.createQuery("SELECT c FROM VisitorLog c WHERE c.timestamp BETWEEN :start AND :end");
+        query.setParameter("start", start);
+        query.setParameter("end", end);
+        return query.getResultList();
+    }
+
+    public List getVisitorLogs() {
+        Query query = em.createQuery("SELECT c from VisitorLog c order by c.timestamp asc");
+        return query.getResultList();
     }
 
     protected String getCookieName() {

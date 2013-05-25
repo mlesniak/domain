@@ -2,9 +2,8 @@ package com.mlesniak.homepage;
 
 import org.apache.openjpa.persistence.jdbc.Unique;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * DO for logging visitor frequency.
@@ -21,6 +20,8 @@ public class VisitorLog {
     private String sessionId;
     private String ip;
     private int counter;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
 
     public String getId() {
         return id;
@@ -62,6 +63,15 @@ public class VisitorLog {
                        ", sessionId='" + sessionId + '\'' +
                        ", ip='" + ip + '\'' +
                        ", counter=" + counter +
+                       ", timestamp=" + timestamp +
                        '}';
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

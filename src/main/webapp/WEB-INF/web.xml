@@ -11,8 +11,8 @@
         <!--Location of .md - files and other content-->
         <init-param>
             <param-name>root</param-name>
-            <!--<param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>-->
-            <param-value>/home/ubuntu/www/</param-value>
+            <param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>
+            <!--<param-value>/home/ubuntu/www/</param-value>-->
         </init-param>
     </filter>
 
@@ -25,8 +25,8 @@
         </init-param>
         <init-param>
             <param-name>wicket.configuration</param-name>
-            <param-value>deployment</param-value>
-            <!--<param-value>development</param-value>-->
+            <!--<param-value>deployment</param-value>-->
+            <param-value>development</param-value>
         </init-param>
     </filter>
 
@@ -43,5 +43,9 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <context-param>
+        <param-name>email-config</param-name>
+        <param-value>/Users/mlesniak/Documents/homepage/smtp-credentials</param-value>
+    </context-param>
 
 </web-app>
