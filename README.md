@@ -1,14 +1,21 @@
-# Unsorted playground to play with Amazon EC2 / SES / ...
+# Playground for different JavaEE and Web techniques.
+Feel free to contact me at mail@mlesniak.com
 
 ## Done
 * Markdown to HTML
 * EMail logging
 * Logging with Cookies
+* good configurability
 
 ## Open
-* logback logging
+* logback logging (into database)
 * bootstrap adaption
+* oauth (google)
 
-## Important
-* cleanup
-* better configuration strategy (currently way to mixed)
+## Logging
+* Log after ip (and not only cookie)
+
+## Configuration
+* database w/ key/value pairs
+* hence, config file just for initialization
+* search for keys first by classname.key then key (to prevent duplicates)

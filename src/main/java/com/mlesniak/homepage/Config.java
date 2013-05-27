@@ -1,8 +1,13 @@
 package com.mlesniak.homepage;
 
-import javax.ejb.Stateless;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Configuration bean.
@@ -12,16 +17,67 @@ import java.util.List;
  *
  * @author Michael Lesniak (mail@mlesniak.com)
  */
-@Stateless
-public class Config {
-    public int delayBetweenEmailsInMinutes() {
-        return 12 * 60;
+public class Config implements ServletContextListener {
+    private static Config singleton;
+    private String configFilename;
+    private Properties properties;
+
+    public static Config getConfig() {
+        if (singleton == null) {
+            throw new IllegalStateException("Config not yet initialized.");
+        }
+
+        return singleton;
     }
 
-    /** Return a list of initially started background jobs. */
-    public List<Class<? extends BackgroundThread>> getInitialBackgroundThreads() {
-        ArrayList<Class<? extends BackgroundThread>> classes = new ArrayList<Class<? extends BackgroundThread>>();
-        classes.add(EmailJob.class);
-        return classes;
+    public String get(String key) {
+        load();
+
+        return properties.getProperty(key);
+    }
+
+    public List<String> getList(String key) {
+        List<String> list = new ArrayList<String>();
+
+        String value = get(key);
+        if (value != null) {
+            for (String elem : value.split(",")) {
+                list.add(elem.trim());
+            }
+        }
+
+        return list;
+    }
+
+    public int getInt(String key) {
+        return Integer.parseInt(get(key));
+    }
+
+    private void load() {
+        if (properties != null) {
+            return;
+        }
+
+        properties = new Properties();
+        try {
+            properties.load(new FileInputStream(new File(configFilename)));
+        } catch (IOException e) {
+            System.out.println("Unable to load config file. name=" + configFilename);
+        }
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        if (singleton != null) {
+            return;
+        }
+
+        configFilename = servletContextEvent.getServletContext().getInitParameter("config-filename");
+        load();
+        singleton = this;
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
     }
 }

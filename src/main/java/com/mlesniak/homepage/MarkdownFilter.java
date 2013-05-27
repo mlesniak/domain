@@ -25,6 +25,7 @@ public class MarkdownFilter implements Filter {
     @Inject
     private VisitorLogDao dao;
     private FilterConfig filterConfig;
+    Config config;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,12 +36,13 @@ public class MarkdownFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         request = (HttpServletRequest) req;
         response = (HttpServletResponse) resp;
+        config = Config.getConfig();
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
         path = rewritePath(path);
 
         try {
-            File file = new File(filterConfig.getInitParameter("root") + path);
+            File file = new File(config.get("root") + path);
             if (file.exists() && !file.isDirectory()) {
                 createMarkdown(file);
                 return;
@@ -62,10 +64,8 @@ public class MarkdownFilter implements Filter {
     }
 
     private void createMarkdown(File file) throws IOException {
-        String header = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + HEADER_HTML));
-        String footer = FileUtils.readFileToString(new File(filterConfig.getInitParameter("root") + FOOTER_HTML));
-
-        System.out.println("FILE: " + file.getAbsolutePath());
+        String header = FileUtils.readFileToString(new File(config.get("root") + HEADER_HTML));
+        String footer = FileUtils.readFileToString(new File(config.get("root") + FOOTER_HTML));
 
         String output = null;
         if (file.getPath().endsWith(".md")) {

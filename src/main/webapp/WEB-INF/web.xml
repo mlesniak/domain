@@ -8,14 +8,7 @@
     <filter>
         <filter-name>markdown</filter-name>
         <filter-class>com.mlesniak.homepage.MarkdownFilter</filter-class>
-        <!--Location of .md - files and other content-->
-        <init-param>
-            <param-name>root</param-name>
-            <param-value>/Users/mlesniak/Documents/homepage/mlesniak.com/</param-value>
-            <!--<param-value>/home/ubuntu/www/</param-value>-->
-        </init-param>
     </filter>
-
     <filter>
         <filter-name>wicket.homepage</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -30,9 +23,6 @@
         </init-param>
     </filter>
 
-    <listener>
-        <listener-class>com.mlesniak.homepage.BackgroundThreadManager</listener-class>
-    </listener>
 
     <filter-mapping>
         <filter-name>markdown</filter-name>
@@ -43,9 +33,18 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <listener>
+        <listener-class>com.mlesniak.homepage.Config</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.mlesniak.homepage.BackgroundThreadManager</listener-class>
+    </listener>
+
+
+    <!--All configuration is stored in the configfile.-->
     <context-param>
-        <param-name>email-config</param-name>
-        <param-value>/Users/mlesniak/Documents/homepage/smtp-credentials</param-value>
+        <param-name>config-filename</param-name>
+        <param-value>/Users/mlesniak/Documents/homepage/config</param-value>
     </context-param>
 
 </web-app>

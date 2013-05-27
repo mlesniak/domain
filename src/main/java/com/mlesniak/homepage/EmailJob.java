@@ -11,37 +11,25 @@ import javax.ejb.Stateless;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 /** @author Michael Lesniak (mail@mlesniak.com) */
 @Stateless
 public class EmailJob extends BackgroundThread {
     @Inject
     VisitorLogDao dao;
-    @Inject
+
     Config config;
-    private String username;
-    private String password;
-    private String to;
 
     @Override
     public void run() {
-        try {
-            init();
-        } catch (IOException e) {
-            System.out.println("Error loading email configuration.");
-            return;
-        }
+        config = Config.getConfig();
 
         sendEmail();
         while (true) {
             try {
-                Thread.sleep(1000 * 60 * config.delayBetweenEmailsInMinutes());
+                Thread.sleep(1000 * config.getInt("time"));
             } catch (InterruptedException e) {
                 System.out.println("Waiting interrupted. Aborting.");
                 return;
@@ -52,17 +40,19 @@ public class EmailJob extends BackgroundThread {
 
     private void sendEmail() {
         Email email = new SimpleEmail();
-        email.setHostName("email-smtp.us-east-1.amazonaws.com");
-        email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator(username, password));
-        email.setSSLOnConnect(true);
+
         try {
+            email.setHostName("email-smtp.us-east-1.amazonaws.com");
+            email.setSmtpPort(465);
+            DefaultAuthenticator auth = new DefaultAuthenticator(config.get("username"), config.get("password"));
+            email.setAuthenticator(auth);
+            email.setSSLOnConnect(true);
             email.setFrom("mail@mlesniak.com");
             email.setSubject("[mlesniak.com] Statistic (" + new Date() + ")");
             email.setMsg(getMessage());
-            email.addTo(to);
+            email.addTo(config.get("to"));
             email.send();
-            System.out.println(getMessage());
+            System.out.println("Email sent.");
         } catch (EmailException e) {
             e.printStackTrace();
         }
@@ -82,16 +72,11 @@ public class EmailJob extends BackgroundThread {
             sb.append('\n');
         }
 
+        if (sb.length() == 0) {
+            sb.append("No entries found.");
+        }
+
         return sb.toString();
-    }
-
-    private void init() throws IOException {
-        Properties prop = new Properties();
-        prop.load(new FileInputStream(new File(getAttribute("email-config"))));
-
-        username = prop.getProperty("username");
-        password = prop.getProperty("password");
-        to = prop.getProperty("to");
     }
 
     @Override
