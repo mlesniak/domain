@@ -8,6 +8,7 @@ Feel free to contact me at mail@mlesniak.com
 * good configurability
 
 ## Open
+* quartz for background jobs
 * logback logging (into database)
 * bootstrap adaption
 * oauth (google)
