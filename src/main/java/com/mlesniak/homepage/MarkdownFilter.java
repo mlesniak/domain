@@ -26,6 +26,8 @@ public class MarkdownFilter implements Filter {
     private VisitorLogDao dao;
     private FilterConfig filterConfig;
     Config config;
+    @Inject
+    DaoManager _neverUsed;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -37,6 +39,8 @@ public class MarkdownFilter implements Filter {
         request = (HttpServletRequest) req;
         response = (HttpServletResponse) resp;
         config = Config.getConfig();
+
+        System.out.println("dao:" + _neverUsed);
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
         path = rewritePath(path);

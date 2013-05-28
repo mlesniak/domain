@@ -9,7 +9,6 @@ import java.util.Date;
 
 public class HomePage extends WebPage {
     private static final long serialVersionUID = 1L;
-    private BackgroundThreadManager btm;
 
     public HomePage(final PageParameters parameters) {
         super(parameters);
@@ -24,8 +23,6 @@ public class HomePage extends WebPage {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
-        btm = MainApplication.getBackgroundThreadManager();
     }
 }
 

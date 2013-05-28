@@ -6,37 +6,18 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.joda.time.DateTime;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 import javax.ejb.Stateless;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
 
 /** @author Michael Lesniak (mail@mlesniak.com) */
 @Stateless
-public class EmailJob extends BackgroundThread {
-    @Inject
-    VisitorLogDao dao;
-
+public class EmailJob implements Job {
     Config config;
-
-    @Override
-    public void run() {
-        config = Config.getConfig();
-
-        sendEmail();
-        while (true) {
-            try {
-                Thread.sleep(1000 * config.getInt("time"));
-            } catch (InterruptedException e) {
-                System.out.println("Waiting interrupted. Aborting.");
-                return;
-            }
-            sendEmail();
-        }
-    }
 
     private void sendEmail() {
         Email email = new SimpleEmail();
@@ -61,7 +42,7 @@ public class EmailJob extends BackgroundThread {
     private String getMessage() {
         DateTime today = new DateTime().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
         DateTime tomorrow = today.plusDays(1);
-        List logs = dao.getVisitorLogs(today.toDate(), tomorrow.toDate());
+        List logs = DaoManager.get().getVisitorLogDao().getVisitorLogs(today.toDate(), tomorrow.toDate());
 
         StringBuilder sb = new StringBuilder();
         for (Object log : logs) {
@@ -80,8 +61,8 @@ public class EmailJob extends BackgroundThread {
     }
 
     @Override
-    public void inject(BeanManager beanManager) {
-        InjectionTarget<EmailJob> injectionTarget = beanManager.createInjectionTarget(beanManager.createAnnotatedType(EmailJob.class));
-        injectionTarget.inject(this, beanManager.<EmailJob>createCreationalContext(null));
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        config = Config.getConfig();
+        sendEmail();
     }
 }

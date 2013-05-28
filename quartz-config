@@ -1,0 +1,4 @@
+# Default config from http://quartz-scheduler.org/documentation/quartz-2.1.x/quick-start
+org.quartz.scheduler.instanceName = MyScheduler
+org.quartz.threadPool.threadCount = 3
+org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore

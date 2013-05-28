@@ -1,0 +1,15 @@
+# Markdown
+root=/Users/mlesniak/Documents/homepage/mlesniak.com/
+
+# EMail configuration
+username=<amazon ses username>
+password=<amazon ses password>
+to=mail@mlesniak.com
+from=mail@mlesniak.com
+
+
+
+
+# Background jobs (using quartz)
+jobs=com.mlesniak.homepage.EmailJob
+com.mlesniak.homepage.EmailJob.cron=* * */4 * * ?

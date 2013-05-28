@@ -33,15 +33,23 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+
+    <!--Quartz-->
+    <context-param>
+        <param-name>quartz:config-file</param-name>
+        <param-value>/Users/mlesniak/Documents/homepage/quartz-config</param-value>
+    </context-param>
     <listener>
-        <listener-class>com.mlesniak.homepage.Config</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.mlesniak.homepage.BackgroundThreadManager</listener-class>
+        <listener-class>
+            org.quartz.ee.servlet.QuartzInitializerListener
+        </listener-class>
     </listener>
 
 
     <!--All configuration is stored in the configfile.-->
+    <listener>
+        <listener-class>com.mlesniak.homepage.Config</listener-class>
+    </listener>
     <context-param>
         <param-name>config-filename</param-name>
         <param-value>/Users/mlesniak/Documents/homepage/config</param-value>

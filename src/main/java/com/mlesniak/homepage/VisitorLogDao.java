@@ -96,7 +96,7 @@ public class VisitorLogDao {
     }
 
     public List getVisitorLogs(Date start, Date end) {
-        Query query = em.createQuery("SELECT c FROM VisitorLog c WHERE c.timestamp BETWEEN :start AND :end");
+        Query query = em.createQuery("SELECT c FROM VisitorLog c WHERE c.timestamp BETWEEN :start AND :end order by c.timestamp asc");
         query.setParameter("start", start);
         query.setParameter("end", end);
         return query.getResultList();
