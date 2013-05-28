@@ -6,9 +6,9 @@ Feel free to contact me at mail@mlesniak.com
 * EMail logging
 * Logging with Cookies
 * good configurability
+* quartz for background jobs
 
 ## Open
-* quartz for background jobs
 * logback logging (into database)
 * bootstrap adaption
 * oauth (google)
