@@ -44,10 +44,35 @@ public class Config implements ServletContextListener {
         return singleton;
     }
 
+    /**
+     * To allow for an easier configuration, values for a key a.b.c.d are searched in this order:
+     * <pre>
+     *     d
+     *     c.d
+     *     b.c.d
+     *     a.b.c.d
+     * </pre>
+     * This allows for a clearly arranged configuration file, although the user is responsible for preventing
+     * duplicates.
+     *
+     * @param key The key to look for.
+     *
+     * @return The property.
+     */
     public String get(String key) {
         load();
 
-        return properties.getProperty(key);
+        String[] packageParts = key.split("\\.");
+        StringBuffer sb = new StringBuffer();
+        for (int i = packageParts.length - 1; i >= 0; --i) {
+            sb.insert(0, packageParts[i]);
+            if (properties.containsKey(sb.toString())) {
+                return properties.getProperty(sb.toString());
+            }
+            sb.insert(0, '.');
+        }
+
+        return null;
     }
 
     public List<String> getList(String key) {
@@ -65,6 +90,10 @@ public class Config implements ServletContextListener {
 
     public Scheduler getScheduler() {
         return scheduler;
+    }
+
+    public boolean getBoolean(String key) {
+        return Boolean.parseBoolean(get(key));
     }
 
     public int getInt(String key) {
