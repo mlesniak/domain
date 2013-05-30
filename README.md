@@ -9,6 +9,7 @@ This project is used to play around with a few open source technologies and try 
 * quartz for background jobs
 * Log after ip (and not only cookie)
 * search for keys first by classname.key then key (to prevent duplicates)
+* database w/ key/value pairs (hence, config file just for initialization)
 
 ## Open
 * bootstrap adaption
@@ -16,8 +17,8 @@ This project is used to play around with a few open source technologies and try 
 * oauth (amazon)
 
 ## Logging
-* logback logging (into database)
+* logback logging
+* logging into database
 
-## Configuration
-* database w/ key/value pairs
-* hence, config file just for initialization
+
+
