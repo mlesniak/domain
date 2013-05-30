@@ -7,14 +7,15 @@ Feel free to contact me at mail@mlesniak.com
 * Logging with Cookies
 * good configurability
 * quartz for background jobs
+* Log after ip (and not only cookie)
 
 ## Open
-* logback logging (into database)
 * bootstrap adaption
 * oauth (google)
+* oauth (amazon)
 
 ## Logging
-* Log after ip (and not only cookie)
+* logback logging (into database)
 
 ## Configuration
 * database w/ key/value pairs
