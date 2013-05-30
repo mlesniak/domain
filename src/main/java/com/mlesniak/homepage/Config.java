@@ -5,6 +5,7 @@ import org.quartz.*;
 import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.quartz.impl.StdSchedulerFactory;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
@@ -31,6 +32,9 @@ public class Config implements ServletContextListener {
     private String configFilename;
     private Properties properties;
     private Scheduler scheduler;
+    // Although never used, we have to inject the DAO manager here such that it is initialized for later threads, e.g. jobs.
+    @Inject
+    private DaoManager manager;
 
     public static Config getConfig() {
         if (singleton == null) {
