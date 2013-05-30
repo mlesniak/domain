@@ -1,4 +1,4 @@
-package com.mlesniak.homepage;
+package com.mlesniak.homepage.config;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

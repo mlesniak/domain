@@ -48,7 +48,7 @@
 
     <!--All configuration is stored in the configfile.-->
     <listener>
-        <listener-class>com.mlesniak.homepage.Config</listener-class>
+        <listener-class>com.mlesniak.homepage.config.Config</listener-class>
     </listener>
     <context-param>
         <param-name>config-filename</param-name>

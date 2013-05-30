@@ -1,4 +1,4 @@
-package com.mlesniak.homepage;
+package com.mlesniak.homepage.config;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

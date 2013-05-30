@@ -1,5 +1,6 @@
 package com.mlesniak.homepage;
 
+import com.mlesniak.homepage.config.Config;
 import com.petebevin.markdown.MarkdownProcessor;
 import org.apache.commons.io.FileUtils;
 

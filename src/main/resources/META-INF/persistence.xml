@@ -5,7 +5,7 @@
         <!--<non-jta-data-source>appDatabaseUnmanaged</non-jta-data-source>-->
 
         <class>com.mlesniak.homepage.VisitorLog</class>
-        <class>com.mlesniak.homepage.ConfigDO</class>
+        <class>com.mlesniak.homepage.config.ConfigDO</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

@@ -1,5 +1,6 @@
-package com.mlesniak.homepage;
+package com.mlesniak.homepage.config;
 
+import com.mlesniak.homepage.DaoManager;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.ee.servlet.QuartzInitializerListener;
@@ -22,22 +23,22 @@ import static org.quartz.TriggerBuilder.newTrigger;
 /**
  * Configuration bean.
  * <p/>
- * Later configuration should be loaded from the database if possible and the bean is only used as the initialization
- * config.
+ * Later configuration should be loaded from the database if possible and the configuration file is only used as the
+ * initialization config.
  *
  * @author Michael Lesniak (mail@mlesniak.com)
  */
 public class Config implements ServletContextListener {
     public static final String OVERWRITE_DATABASE = "overwriteDatabase";
     private static Config singleton;
+    @Inject
+    ConfigDao configDao;
     private String configFilename;
     private Properties properties;
     private Scheduler scheduler;
     // Although never used, we have to inject the DAO manager here such that it is initialized for later threads, e.g. jobs.
     @Inject
     private DaoManager manager;
-    @Inject
-    ConfigDao configDao;
 
     public static Config getConfig() {
         if (singleton == null) {

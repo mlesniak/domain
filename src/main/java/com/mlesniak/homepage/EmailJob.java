@@ -1,5 +1,6 @@
 package com.mlesniak.homepage;
 
+import com.mlesniak.homepage.config.Config;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
