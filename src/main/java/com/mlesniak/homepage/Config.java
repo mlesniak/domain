@@ -28,6 +28,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @author Michael Lesniak (mail@mlesniak.com)
  */
 public class Config implements ServletContextListener {
+    public static final String OVERWRITE_DATABASE = "overwriteDatabase";
     private static Config singleton;
     private String configFilename;
     private Properties properties;
@@ -35,6 +36,8 @@ public class Config implements ServletContextListener {
     // Although never used, we have to inject the DAO manager here such that it is initialized for later threads, e.g. jobs.
     @Inject
     private DaoManager manager;
+    @Inject
+    ConfigDao configDao;
 
     public static Config getConfig() {
         if (singleton == null) {
@@ -66,13 +69,24 @@ public class Config implements ServletContextListener {
         StringBuffer sb = new StringBuffer();
         for (int i = packageParts.length - 1; i >= 0; --i) {
             sb.insert(0, packageParts[i]);
-            if (properties.containsKey(sb.toString())) {
-                return properties.getProperty(sb.toString());
+
+            String result = retrieveValue(sb.toString());
+            if (result != null) {
+                return result;
             }
             sb.insert(0, '.');
         }
 
         return null;
+    }
+
+    private String retrieveValue(String key) {
+        String value = configDao.get(key);
+        if (value != null) {
+            return value;
+        }
+
+        return properties.getProperty(key);
     }
 
     public List<String> getList(String key) {
@@ -93,7 +107,12 @@ public class Config implements ServletContextListener {
     }
 
     public boolean getBoolean(String key) {
-        return Boolean.parseBoolean(get(key));
+        String s = get(key);
+        if (s == null) {
+            return false;
+        }
+
+        return Boolean.parseBoolean(s);
     }
 
     public int getInt(String key) {
@@ -123,6 +142,8 @@ public class Config implements ServletContextListener {
         load();
         singleton = this;
 
+        handleDatabase();
+
         StdSchedulerFactory factory = (StdSchedulerFactory) servletContextEvent.getServletContext().getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
         try {
             scheduler = factory.getScheduler();
@@ -130,6 +151,25 @@ public class Config implements ServletContextListener {
         } catch (SchedulerException e) {
             System.out.println("Unable to get quartz scheduler.");
             e.printStackTrace();
+        }
+
+    }
+
+    private void handleDatabase() {
+        if (!getBoolean(OVERWRITE_DATABASE)) {
+            System.out.println("Ignoring configuration file.");
+            configDao.delete(OVERWRITE_DATABASE);
+            return;
+        }
+
+        System.out.println("Filling database from file.");
+        for (Object key : properties.keySet()) {
+            if (StringUtils.equals((CharSequence) key, OVERWRITE_DATABASE)) {
+                continue;
+            }
+            String value = (String) properties.get(key);
+            System.out.println("Setting key=" + key + " value=" + value);
+            configDao.save((String) key, value);
         }
 
     }

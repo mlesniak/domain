@@ -1,3 +1,6 @@
+# Should configuration files in database be overwritten?
+overwriteDatabase=true
+
 # Markdown
 root=/Users/mlesniak/Documents/homepage/mlesniak.com/
 
