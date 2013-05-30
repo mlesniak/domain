@@ -34,7 +34,9 @@ public class EmailJob implements Job {
             email.addTo(config.get("to"));
             if (config.getBoolean("com.mlesniak.homepage.EmailJob.sendEmail")) {
                 email.send();
-                System.out.println("Email sent.");
+                System.out.println(new Date().toString() + " Email sent.");
+            } else {
+                System.out.println(new Date().toString() + " FAKE Email sent.");
             }
         } catch (EmailException e) {
             e.printStackTrace();
