@@ -31,36 +31,68 @@ public class VisitorLogDao {
         VisitorLog visitorLog = getVisitorLogByCookie(cookie);
 
         if (visitorLog == null) {
-            createVisistorLog(request, response);
+            // No cookie found.
+            visitorLog = getVisitorLogByIp(request.getRemoteHost());
+            if (visitorLog == null) {
+                // No IP found. Create new entry.
+                createVisistorLog(request, response);
+            } else {
+                // IP found. Update cookie.
+                updateVisitorLog(request, response, visitorLog, true);
+            }
         } else {
-            updateVisitorLog(request, visitorLog);
+            // Cookie found. Update counter.
+            updateVisitorLog(request, response, visitorLog, false);
         }
     }
 
+    private VisitorLog getVisitorLogByIp(String ip) {
+        if (ip == null) {
+            return null;
+        }
+
+        Query query = em.createQuery("SELECT c FROM VisitorLog c WHERE c.ip = :ip");
+        query.setParameter("ip", ip);
+
+        List results = query.getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        // Multiple result can not happen since the id is unique.
+        return (VisitorLog) results.get(0);
+    }
+
     private void createVisistorLog(HttpServletRequest request, HttpServletResponse response) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-        String cookieId = RandomStringUtils.random(40, true, true);
-        Cookie cookie = new Cookie(getCookieName(), cookieId);
+        String cookieId = getRandomCookieValue();
 
         VisitorLog visitorLog = new VisitorLog();
         visitorLog.setCounter(1);
         visitorLog.setIp(request.getRemoteHost());
         visitorLog.setId(cookieId);
-        visitorLog.setSessionId(request.getSession().getId());
         visitorLog.setTimestamp(new Date());
 
         em.persist(visitorLog);
-        response.addCookie(cookie);
+        response.addCookie(new Cookie(getCookieName(), cookieId));
     }
 
     @TransactionAttribute
-    private void updateVisitorLog(HttpServletRequest request, VisitorLog visitorLog) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-
+    private void updateVisitorLog(HttpServletRequest request, HttpServletResponse response, VisitorLog visitorLog, boolean updateCookie) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         visitorLog.setCounter(visitorLog.getCounter() + 1);
         visitorLog.setIp(request.getRemoteHost());
-        visitorLog.setSessionId(request.getSession().getId());
         visitorLog.setTimestamp(new Date());
 
+        if (updateCookie) {
+            String cookieId = getRandomCookieValue();
+            visitorLog.setId(cookieId);
+            response.addCookie(new Cookie(getCookieName(), cookieId));
+        }
+
         em.persist(visitorLog);
+    }
+
+    private String getRandomCookieValue() {
+        return RandomStringUtils.random(40, true, true);
     }
 
     private String getCookie(HttpServletRequest request, String name) {
