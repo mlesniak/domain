@@ -12,4 +12,5 @@ from=mail@mlesniak.com
 
 # Background jobs (using quartz)
 jobs=com.mlesniak.homepage.EmailJob
-com.mlesniak.homepage.EmailJob.cron=* * */4 * * ?
+EmailJob.cron=* * */4 * * ?
+EmailJob.sendEmail=false
