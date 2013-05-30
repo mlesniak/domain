@@ -32,8 +32,10 @@ public class EmailJob implements Job {
             email.setSubject("[mlesniak.com] Statistic (" + new Date() + ")");
             email.setMsg(getMessage());
             email.addTo(config.get("to"));
-            email.send();
-            System.out.println("Email sent.");
+            if (config.getBoolean("com.mlesniak.homepage.EmailJob.sendEmail")) {
+                email.send();
+                System.out.println("Email sent.");
+            }
         } catch (EmailException e) {
             e.printStackTrace();
         }
