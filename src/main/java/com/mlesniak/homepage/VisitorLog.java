@@ -17,7 +17,7 @@ public class VisitorLog {
     private int pk;
     @Unique
     private String id;
-    private String sessionId;
+    @Unique
     private String ip;
     private int counter;
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,24 +47,15 @@ public class VisitorLog {
         this.counter = counter;
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     @Override
     public String toString() {
         return "VisitorLog{" +
-                       "pk=" + pk +
-                       ", id='" + id + '\'' +
-                       ", sessionId='" + sessionId + '\'' +
-                       ", ip='" + ip + '\'' +
-                       ", counter=" + counter +
-                       ", timestamp=" + timestamp +
-                       '}';
+                 "pk=" + pk +
+                 ", id='" + id + '\'' +
+                 ", ip='" + ip + '\'' +
+                 ", counter=" + counter +
+                 ", timestamp=" + timestamp +
+                 '}';
     }
 
     public Date getTimestamp() {
