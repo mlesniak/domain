@@ -1,5 +1,5 @@
-# Playground for different JavaEE and Web techniques.
-Feel free to contact me at mail@mlesniak.com
+# Software behind mlesniak.com
+This project is used to play around with a few open source technologies and try stuff. Feel free to contact me at mail@mlesniak.com
 
 ## Done
 * Markdown to HTML
@@ -8,6 +8,7 @@ Feel free to contact me at mail@mlesniak.com
 * good configurability
 * quartz for background jobs
 * Log after ip (and not only cookie)
+* search for keys first by classname.key then key (to prevent duplicates)
 
 ## Open
 * bootstrap adaption
@@ -20,4 +21,3 @@ Feel free to contact me at mail@mlesniak.com
 ## Configuration
 * database w/ key/value pairs
 * hence, config file just for initialization
-* search for keys first by classname.key then key (to prevent duplicates)
