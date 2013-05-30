@@ -1,6 +1,5 @@
 package com.mlesniak.homepage.config;
 
-import com.mlesniak.homepage.DaoManager;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.ee.servlet.QuartzInitializerListener;
@@ -36,9 +35,6 @@ public class Config implements ServletContextListener {
     private String configFilename;
     private Properties properties;
     private Scheduler scheduler;
-    // Although never used, we have to inject the DAO manager here such that it is initialized for later threads, e.g. jobs.
-    @Inject
-    private DaoManager manager;
 
     public static Config getConfig() {
         if (singleton == null) {

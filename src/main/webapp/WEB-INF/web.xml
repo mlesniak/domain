@@ -5,6 +5,11 @@
 
     <display-name>homepage</display-name>
 
+    <!--Initialize DAO Manager.-->
+    <listener>
+        <listener-class>com.mlesniak.homepage.DaoManager</listener-class>
+    </listener>
+
     <filter>
         <filter-name>markdown</filter-name>
         <filter-class>com.mlesniak.homepage.MarkdownFilter</filter-class>
