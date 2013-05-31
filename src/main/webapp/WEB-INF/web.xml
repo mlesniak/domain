@@ -10,10 +10,15 @@
         <listener-class>com.mlesniak.homepage.DaoManager</listener-class>
     </listener>
 
-    <filter>
-        <filter-name>markdown</filter-name>
-        <filter-class>com.mlesniak.homepage.MarkdownFilter</filter-class>
-    </filter>
+    <servlet>
+        <servlet-name>markdown</servlet-name>
+        <servlet-class>com.mlesniak.homepage.MarkdownFilter</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>markdown</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>wicket.homepage</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -30,12 +35,8 @@
 
 
     <filter-mapping>
-        <filter-name>markdown</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
         <filter-name>wicket.homepage</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/main/*</url-pattern>
     </filter-mapping>
 
 

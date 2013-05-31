@@ -5,57 +5,45 @@ import com.petebevin.markdown.MarkdownProcessor;
 import org.apache.commons.io.FileUtils;
 
 import javax.inject.Inject;
-import javax.servlet.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * A special filter which checks if a file with the given name (and extension .md exists) and then returns the .html of
- * the .md in the response. Serves other files if they exist.
+ * A servlet which checks if a file with the given name (and extension .md exists) and then returns the .html of the .md
+ * in the response. Serves other files if they exist.
  *
  * @author Michael Lesniak (mail@mlesniak.com)
  */
-public class MarkdownFilter implements Filter {
+public class MarkdownFilter extends HttpServlet {
     public static final String HEADER_HTML = "header.html";
     public static final String FOOTER_HTML = "footer.html";
     public static final String COOKIE_NAME = "mlesniak.com";
-    HttpServletRequest request;
-    HttpServletResponse response;
     @Inject
     private VisitorLogDao dao;
-    private FilterConfig filterConfig;
     Config config;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
-    }
-
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        request = (HttpServletRequest) req;
-        response = (HttpServletResponse) resp;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         config = Config.getConfig();
-
         String path = request.getRequestURI().substring(request.getContextPath().length());
         path = rewritePath(path);
 
         try {
             File file = new File(config.get("root") + path);
             if (file.exists() && !file.isDirectory()) {
-                createMarkdown(file);
+                createMarkdown(file, request, response);
                 return;
             }
         } catch (IOException e) {
             System.out.println("I/O error: " + e.getMessage());
         }
-
-        chain.doFilter(req, resp);
     }
 
-    private void updateLog() {
+    private void updateLog(HttpServletRequest request, HttpServletResponse response) {
         try {
             dao.updateOrCreateVisitorLog(request, response);
         } catch (Exception e) {
@@ -64,18 +52,18 @@ public class MarkdownFilter implements Filter {
         }
     }
 
-    private void createMarkdown(File file) throws IOException {
+    private synchronized void createMarkdown(File file, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String header = FileUtils.readFileToString(new File(config.get("root") + HEADER_HTML));
         String footer = FileUtils.readFileToString(new File(config.get("root") + FOOTER_HTML));
 
         String output = null;
         if (file.getPath().endsWith(".md")) {
-            updateLog();
+            updateLog(request, response);
 
             MarkdownProcessor md = new MarkdownProcessor();
             String content = FileUtils.readFileToString(file);
             output = header + md.markdown(content) + footer;
-            response.getOutputStream().print(output);
+            response.getOutputStream().write(output.getBytes());
         } else {
             byte[] bout = FileUtils.readFileToByteArray(file);
             response.getOutputStream().write(bout);
@@ -85,7 +73,7 @@ public class MarkdownFilter implements Filter {
     }
 
     private String rewritePath(String path) {
-        boolean isDir = new File(filterConfig.getInitParameter("root") + path).isDirectory();
+        boolean isDir = new File(config.get("root") + path).isDirectory();
         if (isDir && !path.endsWith("/")) {
             path += "/";
         }
