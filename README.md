@@ -15,6 +15,7 @@ This project is used to play around with a few open source technologies and try 
 * bootstrap adaption
 * oauth (google)
 * oauth (amazon)
+* https-support
 
 ## Logging
 * logback logging
