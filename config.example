@@ -1,6 +1,9 @@
 # Should configuration files in database be overwritten?
 overwriteDatabase=true
 
+# Logging with logback
+logback.configurationFile=/Users/mlesniak/Documents/homepage/logback.xml
+
 # Markdown
 root=/Users/mlesniak/Documents/homepage/mlesniak.com/
 

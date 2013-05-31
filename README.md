@@ -10,6 +10,7 @@ This project is used to play around with a few open source technologies and try 
 * Log after ip (and not only cookie)
 * search for keys first by classname.key then key (to prevent duplicates)
 * database w/ key/value pairs (hence, config file just for initialization)
+* logback logging
 
 ## Open
 * bootstrap adaption
@@ -18,7 +19,7 @@ This project is used to play around with a few open source technologies and try 
 * https-support
 
 ## Logging
-* logback logging
+
 * logging into database
 
 

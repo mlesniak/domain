@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
@@ -28,8 +30,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @author Michael Lesniak (mail@mlesniak.com)
  */
 public class Config implements ServletContextListener {
-    public static final String OVERWRITE_DATABASE = "overwriteDatabase";
     private static Config singleton;
+    // This is the only place where log is not initialized directly.
+    private static Logger log = null;
     @Inject
     ConfigDao configDao;
     private String configFilename;
@@ -139,6 +142,7 @@ public class Config implements ServletContextListener {
         load();
         singleton = this;
 
+        handleLogging();
         handleDatabase();
 
         StdSchedulerFactory factory = (StdSchedulerFactory) servletContextEvent.getServletContext().getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
@@ -152,20 +156,35 @@ public class Config implements ServletContextListener {
 
     }
 
-    private void handleDatabase() {
-        if (!getBoolean(OVERWRITE_DATABASE)) {
-            System.out.println("Ignoring configuration file.");
-            configDao.delete(OVERWRITE_DATABASE);
+    private void handleLogging() {
+        String logback = "logback.configurationFile";
+        String file = get(logback);
+        if (file != null && !(new File(file).exists())) {
+            System.out.println("logback configuration file does not exist: " + file);
             return;
         }
 
-        System.out.println("Filling database from file.");
+        // Set logback.xml location before initialization.
+        System.setProperty(logback, file);
+        log = LoggerFactory.getLogger(Config.class);
+        log.info("Logback logging initialized.");
+    }
+
+    private void handleDatabase() {
+        String overwriteDatabase = "overwriteDatabase";
+        if (!getBoolean(overwriteDatabase)) {
+            log.info("Ignoring configuration file.");
+            configDao.delete(overwriteDatabase);
+            return;
+        }
+
+        log.info("Filling database from file.");
         for (Object key : properties.keySet()) {
-            if (StringUtils.equals((CharSequence) key, OVERWRITE_DATABASE)) {
+            if (StringUtils.equals((CharSequence) key, overwriteDatabase)) {
                 continue;
             }
             String value = (String) properties.get(key);
-            System.out.println("Setting key=" + key + " value=" + value);
+            log.debug("Setting key=" + key + " value=" + value);
             configDao.save((String) key, value);
         }
 
@@ -175,7 +194,7 @@ public class Config implements ServletContextListener {
     private void startInitialThreads() {
         List<String> jobs = getList("jobs");
         if (jobs == null) {
-            System.out.println("No jobs= definition found.");
+            log.warn("No jobs= definition found.");
             return;
         }
 
@@ -186,7 +205,7 @@ public class Config implements ServletContextListener {
 
             String cronExpression = get(job + ".cron");
             if (cronExpression == null) {
-                System.out.println("No cron= definition for job=" + job);
+                log.warn("No cron= definition for job=" + job);
                 continue;
             }
 
@@ -199,10 +218,10 @@ public class Config implements ServletContextListener {
                                     .withIdentity(job + ".trigger")
                                     .withSchedule(cronSchedule(cronExpression))
                                     .build();
-                System.out.println("Scheduling job=" + job + " with cron=" + cronExpression);
+                log.info("Scheduling job=" + job + " with cron=" + cronExpression);
                 getScheduler().scheduleJob(jobDetail, trigger);
             } catch (Exception e) {
-                System.out.println("Unable to create job. class=" + job);
+                log.warn("Unable to create job. class=" + job);
                 e.printStackTrace();
             }
         }
@@ -213,7 +232,7 @@ public class Config implements ServletContextListener {
         try {
             getScheduler().shutdown();
         } catch (SchedulerException e) {
-            System.out.println("Unable to shut down scheduler.");
+            log.error("Unable to shut down scheduler.");
             e.printStackTrace();
         }
     }
