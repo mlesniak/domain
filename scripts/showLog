@@ -1,0 +1,3 @@
+#!/bin/sh
+psql -h localhost wicket mlesniak -c 'select to_timestamp(timestmp / 1000) as time, level_string as level, formatted_message as message from logging_event order by timestmp asc;'
+

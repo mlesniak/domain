@@ -1,0 +1,3 @@
+#!/bin/sh
+psql -h localhost wicket mlesniak -c 'select timestamp, ip, counter from visitorlog order by timestamp asc;'
+

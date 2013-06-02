@@ -1,0 +1,4 @@
+Scripts work by providing a ~/.pgpass
+
+#hostname:port:database:username:password
+localhost:5432:wicket:USERNMAE:PASSWORD
