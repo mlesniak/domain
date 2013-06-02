@@ -1,0 +1,7 @@
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA
+password "changeit"
+
+stored in ~/.keystore
+may be moved accordingly, i.e. for amazon ec2 to /root/ (due to using port 80 direcly).
+
+
