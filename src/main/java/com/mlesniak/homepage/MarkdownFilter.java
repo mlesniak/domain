@@ -3,6 +3,9 @@ package com.mlesniak.homepage;
 import com.mlesniak.homepage.config.Config;
 import com.petebevin.markdown.MarkdownProcessor;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -22,12 +25,15 @@ public class MarkdownFilter extends HttpServlet {
     public static final String HEADER_HTML = "header.html";
     public static final String FOOTER_HTML = "footer.html";
     public static final String COOKIE_NAME = "mlesniak.com";
+    private static Logger log = LoggerFactory.getLogger(MarkdownFilter.class);
+    Config config;
     @Inject
     private VisitorLogDao dao;
-    Config config;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MDC.put("session", request.getSession().getId());
+        log.info("Request from " + request.getRemoteHost());
         config = Config.getConfig();
         String path = request.getRequestURI().substring(request.getContextPath().length());
         path = rewritePath(path);
@@ -58,6 +64,7 @@ public class MarkdownFilter extends HttpServlet {
 
         String output = null;
         if (file.getPath().endsWith(".md")) {
+            log.debug("Parsing .md. file=" + file);
             updateLog(request, response);
 
             MarkdownProcessor md = new MarkdownProcessor();
@@ -65,6 +72,7 @@ public class MarkdownFilter extends HttpServlet {
             output = header + md.markdown(content) + footer;
             response.getOutputStream().write(output.getBytes());
         } else {
+            log.debug("Parsing other file. file=" + file);
             byte[] bout = FileUtils.readFileToByteArray(file);
             response.getOutputStream().write(bout);
         }
