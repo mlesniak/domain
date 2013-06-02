@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="15 seconds">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-6level] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <driverClass>org.postgresql.Driver</driverClass>
+            <!--<url>jdbc:postgresql://localhost:5432/wicket</url>-->
+            <url></url>
+            <user></user>
+            <password></password>
+        </connectionSource>
+    </appender>
+
+
+    <logger name="com.mlesniak" level="DEBUG" additivity="false">
+        <appender-ref ref="DB"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DB"/>
+    </root>
+</configuration>
+

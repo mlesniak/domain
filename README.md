@@ -11,16 +11,16 @@ This project is used to play around with a few open source technologies and try 
 * search for keys first by classname.key then key (to prevent duplicates)
 * database w/ key/value pairs (hence, config file just for initialization)
 * logback logging
+* logging into database
 
 ## Open
 * bootstrap adaption
 * oauth (google)
 * oauth (amazon)
 * https-support
+* config watchservice reloading
 
-## Logging
 
-* logging into database
 
 
 
