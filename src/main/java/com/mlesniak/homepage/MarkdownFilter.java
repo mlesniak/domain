@@ -34,6 +34,11 @@ public class MarkdownFilter extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         MDC.put("session", request.getSession().getId());
         log.info("Request from " + request.getRemoteHost());
+
+        if (ServletUtils.sslEnabled(request)) {
+            log.info("SSL connection enabled.");
+        }
+
         config = Config.getConfig();
         String path = request.getRequestURI().substring(request.getContextPath().length());
         path = rewritePath(path);

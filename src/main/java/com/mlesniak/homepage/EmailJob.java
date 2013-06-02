@@ -20,8 +20,11 @@ import java.util.List;
 public class EmailJob implements Job {
     Config config;
 
-    private void sendEmail() {
+    public void sendEmail() {
         Email email = new SimpleEmail();
+        if (config == null) {
+            config = Config.getConfig();
+        }
 
         try {
             email.setHostName("email-smtp.us-east-1.amazonaws.com");
@@ -67,7 +70,6 @@ public class EmailJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        config = Config.getConfig();
         sendEmail();
     }
 }

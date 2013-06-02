@@ -12,8 +12,7 @@ username=<amazon ses username>
 password=<amazon ses password>
 to=mail@mlesniak.com
 from=mail@mlesniak.com
-
-
+#emailToken=
 
 
 # Background jobs (using quartz)
