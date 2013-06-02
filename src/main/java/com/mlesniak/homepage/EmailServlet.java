@@ -34,14 +34,18 @@ public class EmailServlet extends HttpServlet {
         String emailToken = Config.getConfig().get(EMAIL_TOKEN);
         if (StringUtils.isEmpty(emailToken)) {
             log.info("No token defined. Ignoring request");
+            resp.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
         if (req.getRequestURI().endsWith(emailToken)) {
             log.info("Authentication succeeded.");
             (new EmailJob()).sendEmail();
+            resp.getOutputStream().println("EMail sent.");
+            resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             log.warn("Authentication failed.");
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 }

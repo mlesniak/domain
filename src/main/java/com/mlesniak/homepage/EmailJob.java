@@ -10,6 +10,8 @@ import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import java.util.Date;
@@ -18,6 +20,7 @@ import java.util.List;
 /** @author Michael Lesniak (mail@mlesniak.com) */
 @Stateless
 public class EmailJob implements Job {
+    private static Logger log = LoggerFactory.getLogger(EmailJob.class);
     Config config;
 
     public void sendEmail() {
@@ -38,9 +41,9 @@ public class EmailJob implements Job {
             email.addTo(config.get("to"));
             if (config.getBoolean("com.mlesniak.homepage.EmailJob.sendEmail")) {
                 email.send();
-                System.out.println(new Date().toString() + " Email sent.");
+                log.info(new Date().toString() + " Email sent.");
             } else {
-                System.out.println(new Date().toString() + " FAKE Email sent.");
+                log.info(new Date().toString() + " FAKE Email sent.");
             }
         } catch (EmailException e) {
             e.printStackTrace();
