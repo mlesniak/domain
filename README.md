@@ -15,12 +15,13 @@ This project is used to play around with a few open source technologies and try 
 * https-support (rudimentary for email-token authentication)
 * configuration reloading
 * enable port-forwarding on tomcat (to prevent root)
+* fix bug with logback configuration file on first server start
 
 ## Open
 * bootstrap adaption
 * oauth (google)
 * oauth (amazon)
-* fix bug with logback configuration file on first server start
+
 
 
 

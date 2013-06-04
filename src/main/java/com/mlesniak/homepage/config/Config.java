@@ -1,5 +1,8 @@
 package com.mlesniak.homepage.config;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.ee.servlet.QuartzInitializerListener;
@@ -200,7 +203,7 @@ public class Config implements ServletContextListener {
         reloadThread.start();
     }
 
-    private void handleLogging() {
+    private void handleLogging() throws JoranException {
         String logback = "logback.configurationFile";
         String file = get(logback);
         if (file != null && !(new File(file).exists())) {
@@ -208,8 +211,11 @@ public class Config implements ServletContextListener {
             return;
         }
 
-        // Set logback.xml location before initialization.
-        System.setProperty(logback, file);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+        context.reset();
+        configurator.doConfigure(file);
         log = LoggerFactory.getLogger(Config.class);
         log.info("Logback logging initialized.");
     }
