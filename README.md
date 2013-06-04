@@ -13,13 +13,13 @@ This project is used to play around with a few open source technologies and try 
 * logback logging
 * logging into database
 * https-support (rudimentary for email-token authentication)
+* configuration reloading
 
 ## Open
 * bootstrap adaption
 * oauth (google)
 * oauth (amazon)
-* config watchservice reloading
-
+* enable port-forwarding on tomcat (to prevent root)
 
 
 

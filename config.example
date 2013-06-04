@@ -1,5 +1,10 @@
 # Should configuration files in database be overwritten?
+useDatabase=false
 overwriteDatabase=true
+
+# Reload configuration every 30 seconds?
+reloadConfiguration=60
+
 
 # Logging with logback
 logback.configurationFile=/Users/mlesniak/Documents/homepage/logback.xml

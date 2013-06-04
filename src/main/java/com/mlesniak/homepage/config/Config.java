@@ -30,6 +30,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @author Michael Lesniak (mail@mlesniak.com)
  */
 public class Config implements ServletContextListener {
+    public static final String USE_DATABASE = "useDatabase";
+    public static final String RELOAD_TIME = "reloadConfiguration";
     private static Config singleton;
     // This is the only place where log is not initialized directly.
     private static Logger log = null;
@@ -38,6 +40,7 @@ public class Config implements ServletContextListener {
     private String configFilename;
     private Properties properties;
     private Scheduler scheduler;
+    private Thread reloadThread;
 
     public static Config getConfig() {
         if (singleton == null) {
@@ -81,9 +84,12 @@ public class Config implements ServletContextListener {
     }
 
     private String retrieveValue(String key) {
-        String value = configDao.get(key);
-        if (value != null) {
-            return value;
+        // Don't check for database values if configuration should be reloaded from file anyway/
+        if (!properties.containsKey(USE_DATABASE)) {
+            String value = configDao.get(key);
+            if (value != null) {
+                return value;
+            }
         }
 
         return properties.getProperty(key);
@@ -115,12 +121,16 @@ public class Config implements ServletContextListener {
         return Boolean.parseBoolean(s);
     }
 
+    public boolean isDefined(String key) {
+        return get(key) != null;
+    }
+
     public int getInt(String key) {
         return Integer.parseInt(get(key));
     }
 
     private void load() {
-        if (properties != null) {
+        if (properties != null && !properties.containsKey(USE_DATABASE)) {
             return;
         }
 
@@ -134,26 +144,60 @@ public class Config implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        if (singleton != null) {
+        try {
+            if (singleton != null) {
+                return;
+            }
+
+            configFilename = servletContextEvent.getServletContext().getInitParameter("config-filename");
+            load();
+            singleton = this;
+
+            handleLogging();
+            handleDatabase();
+            handleReloading();
+
+            StdSchedulerFactory factory = (StdSchedulerFactory) servletContextEvent.getServletContext().getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
+            try {
+                scheduler = factory.getScheduler();
+                startInitialThreads();
+            } catch (SchedulerException e) {
+                System.out.println("Unable to get quartz scheduler.");
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            log.error("Unable to load configuration.", e);
+        }
+    }
+
+    private void handleReloading() {
+        if (!isDefined(RELOAD_TIME)) {
+            log.info("reloadConfiguration not defined. No processing.");
             return;
         }
 
-        configFilename = servletContextEvent.getServletContext().getInitParameter("config-filename");
-        load();
-        singleton = this;
+        log.debug("Initializing reloading");
+        reloadThread = new Thread() {
+            @Override
+            public void run() {
 
-        handleLogging();
-        handleDatabase();
+                while (!isInterrupted() && get(RELOAD_TIME) != null) {
+                    log.info("Reloading configuration.");
+                    load();
 
-        StdSchedulerFactory factory = (StdSchedulerFactory) servletContextEvent.getServletContext().getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
-        try {
-            scheduler = factory.getScheduler();
-            startInitialThreads();
-        } catch (SchedulerException e) {
-            System.out.println("Unable to get quartz scheduler.");
-            e.printStackTrace();
-        }
+                    try {
+                        Thread.sleep(1000 * getInt(RELOAD_TIME));
+                    } catch (InterruptedException e) {
+                        return;
+                    } catch (NumberFormatException e) {
+                        log.warn("No correct format for reloadConfiguration: " + get(RELOAD_TIME));
+                    }
+                }
 
+                log.info("Stopping reloading.");
+            }
+        };
+        reloadThread.start();
     }
 
     private void handleLogging() {
@@ -172,7 +216,7 @@ public class Config implements ServletContextListener {
 
     private void handleDatabase() {
         String overwriteDatabase = "overwriteDatabase";
-        if (!getBoolean(overwriteDatabase)) {
+        if (!getBoolean(USE_DATABASE)) {
             log.info("Ignoring configuration file.");
             configDao.delete(overwriteDatabase);
             return;
@@ -235,5 +279,7 @@ public class Config implements ServletContextListener {
             log.error("Unable to shut down scheduler.");
             e.printStackTrace();
         }
+
+        reloadThread.interrupt();
     }
 }
