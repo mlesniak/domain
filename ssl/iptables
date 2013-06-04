@@ -1,0 +1,46 @@
+Source: http://www.cyberciti.biz/faq/linux-port-redirection-with-iptables/
+
+Syntax
+
+The syntax is as follows to redirect tcp $srcPortNumber port to $dstPortNumber:
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport $srcPortNumber -j REDIRECT --to-port $dstPortNumbe
+The syntax is as follows to redirect udp $srcPortNumber port to $dstPortNumber:
+
+iptables -t nat -A PREROUTING -i eth0 -p udp --dport $srcPortNumber -j REDIRECT --to-port $dstPortNumbe
+Replace eth0 with your actual interface name. The following syntax match for source and destination ips:
+
+iptables -t nat -I PREROUTING --src $SRC_IP_MASK --dst $DST_IP -p tcp --dport $portNumber -j REDIRECT --to-ports $rediectPort
+Examples:
+
+The following example redirects TCP port 25 to port 2525:
+
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 25 -j REDIRECT --to-port 2525
+In this example all incoming traffic on port 80 redirect to port 8123
+
+iptables -t nat -I PREROUTING --src 0/0 --dst 192.168.1.5 -p tcp --dport 80 -j REDIRECT --to-ports 8123
+Quoting from the iptables man page:
+
+ This  target is only valid in the nat table, in the PREROUTING and OUTPUT
+       chains, and user-defined chains which are only  called  from  those
+       chains.   It redirects the packet to the machine itself by changing the
+       destination IP  to  the  primary  address  of  the  incoming  interface
+       (locally-generated  packets  are  mapped to the 127.0.0.1 address).  It
+       takes one option:
+       --to-ports port[-port]
+              This specifies a destination port or  range  of  ports  to  use:
+              without  this,  the  destination port is never altered.  This is
+              only valid if the rule also specifies -p tcp or -p udp.
+The OUTPUT chain example:
+
+iptables -t nat -I OUTPUT --src 0/0 --dst 192.168.1.5 -p tcp --dport 80 -j REDIRECT --to-ports 8123
+How Do I View NAT Rules?
+
+Type the following command:
+
+iptables -t nat -L -n -v
+How Do I Save NAT Redirect Rules?
+
+Type the following command:
+
+iptables-save
